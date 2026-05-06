@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using WebAPI.DTOs.Products.Create;
 
-namespace WebAPI.Validators.Products
+namespace WebAPI.Middlewares.Products
 {
-    public class CreateProductVLDT : AbstractValidator<CreateProductDTO>
+    public class CreateValidator : AbstractValidator<CreateProductDTO>
     {
-        public CreateProductVLDT()
+        public CreateValidator()
         {
             RuleFor(x => x.ProductName)
                 .NotEmpty().WithMessage("Tên sản phẩm không được để trống")

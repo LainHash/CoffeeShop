@@ -16,7 +16,7 @@ namespace RazorPages.Pages.Product
             _api = api;
         }
 
-        public async Task<IActionResult> OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(Guid id)
         {
             var product = await _api.GetByIdAsync(id);
 

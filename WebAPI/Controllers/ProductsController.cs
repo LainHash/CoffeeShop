@@ -1,10 +1,14 @@
 ﻿
+using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
+using WebAPI.DTOs.Products;
 using WebAPI.DTOs.Products.Create;
+using WebAPI.DTOs.Products.Update;
+using WebAPI.Helpers.Extensions;
 using WebAPI.Models;
-using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Controllers
 {
@@ -12,108 +16,81 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductService _productService;
+        private readonly CoffeeShopDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(CoffeeShopDbContext context, IMapper mapper)
         {
-            _productService = productService;
+            _context = context;
+            _mapper = mapper;
         }
 
-        // GET: api/Products
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var products = await _productService.GetAllAsync();
-            return Ok(products);
+            var query = _context.Products;
+            var products = await query.ToListAsync();
+            var dtos = _mapper.Map<List<ProductBaseDTO>>(products);
+            return Ok(dtos);
         }
 
-        // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            try
-            {
-                var product = await _productService.GetByIdAsync(id);
+            var query = _context.Products;
 
-                return Ok(product);
-            }
-            catch (Exception ex) 
+            var product = await query
+                .FirstOrDefaultAsync(p => p.PublicId == id);
+            if (product == null)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Sản phẩm không tồn tại!");
             }
-            
+
+            var dtos = _mapper.Map<ProductBaseDTO>(product);
+
+            return Ok(dtos);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProductDTO dto)
+        public async Task<IActionResult> Create([FromBody] CreateProductDTO dto, [FromServices] IValidator<CreateProductDTO> validator)
         {
-            // Nếu dùng FluentValidation Auto thì ModelState tự check
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var error = await validator.ValidateAndReturnError(dto);
+            if (error != null)
+            {
+                return error;
+            }
 
-            var created = await _productService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.ProductId }, created);
+            var product = _mapper.Map<Product>(dto);
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<ProductBaseDTO>(product));
+
         }
 
-        //[HttpPatch("{id}")]
-        //public async Task<IActionResult> PatchProduct(int id, Product product)
-        //{
-        //    if (id != product.ProductId)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPatch]
+        public async Task<IActionResult> Update([FromBody] UpdateProductDTO dto, [FromServices] IValidator<UpdateProductDTO> validator, Guid id)
+        {
+            var error = await validator.ValidateAndReturnError(dto);
+            if (error != null)
+            {
+                return error;
+            }
 
-        //    _context.Entry(product).State = EntityState.Modified;
+            var query = _context.Products;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ProductExists(id))
-        //        {
-        //            return NotFound("Sản phẩm không tồn tại!");
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            var product = await query
+                .FirstOrDefaultAsync(p => p.PublicId == id);
+            if (product == null)
+            {
+                return BadRequest("Sản phẩm không tồn tại!");
+            }
 
-        //    return NoContent();
-        //}
+            _mapper.Map(dto, product);
+            await _context.SaveChangesAsync();
 
-        //// POST: api/Products
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Product>> PostProduct(Product product)
-        //{
-        //    _context.Products.Add(product);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
-        //}
-
-        //// DELETE: api/Products/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteProduct(int id)
-        //{
-        //    var product = await _context.Products.FindAsync(id);
-        //    if (product == null)
-        //    {
-        //        return NotFound("Sản phẩm không tồn tại!");
-        //    }
-
-        //    _context.Products.Remove(product);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool ProductExists(int id)
-        //{
-        //    return _context.Products.Any(e => e.ProductId == id);
-        //}
+            return Ok(_mapper.Map<ProductBaseDTO>(product));
+        }
     }
 }

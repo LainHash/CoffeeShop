@@ -31,7 +31,7 @@ namespace RazorPages.Services
             return await res.Content.ReadFromJsonAsync<List<ProductBaseDTO>>() ?? [];
         }
 
-        public async Task<ProductBaseDTO> GetByIdAsync(int id) 
+        public async Task<ProductBaseDTO> GetByIdAsync(Guid id) 
         {
             var res = await _http.GetAsync($"{RouteName.Product}/{id}");
             res.EnsureSuccessStatusCode();

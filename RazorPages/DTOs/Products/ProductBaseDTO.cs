@@ -2,7 +2,7 @@
 {
     public class ProductBaseDTO
     {
-        public int ProductId { get; set; }
+        public Guid PublicId { get; set; }
 
         public string ProductName { get; set; } = null!;
 
