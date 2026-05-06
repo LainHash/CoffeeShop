@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="RazorPages/RazorPages.csproj" />
+  <Project Path="WebAPI/WebAPI.csproj" />
+</Solution>
