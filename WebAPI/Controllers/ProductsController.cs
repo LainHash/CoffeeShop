@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
+using WebAPI.DTOs.Products.Create;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
@@ -9,11 +10,11 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
 
-        public ProductController(IProductService productService)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
         }
@@ -41,6 +42,17 @@ namespace WebAPI.Controllers
                 return BadRequest(ex.Message);
             }
             
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateProductDTO dto)
+        {
+            // Nếu dùng FluentValidation Auto thì ModelState tự check
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var created = await _productService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.ProductId }, created);
         }
 
         //[HttpPatch("{id}")]

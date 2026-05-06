@@ -1,0 +1,7 @@
+﻿namespace RazorPages.Helpers.Constants
+{
+    public static class RouteName
+    {
+        public const string Product = "Products";
+    }
+}

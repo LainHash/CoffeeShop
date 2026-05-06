@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.DTOs.Products;
+using WebAPI.DTOs.Products.Create;
+using WebAPI.Models;
 using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Services.Implementations
@@ -35,6 +37,17 @@ namespace WebAPI.Services.Implementations
             }
             var dto = _mapper.Map<ProductBaseDTO>(product);
             return dto;
+        }
+
+        public async Task<ProductBaseDTO> CreateAsync(CreateProductDTO dto)
+        {
+            var product = _mapper.Map<Product>(dto);
+            product.CreatedAt = DateTime.UtcNow;
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<ProductBaseDTO>(product);
         }
     }
 }

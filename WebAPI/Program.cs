@@ -1,8 +1,10 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Data;
+using WebAPI.DTOs.Products.Create;
 using WebAPI.Services.Implementations;
 using WebAPI.Services.Interfaces;
 
@@ -14,6 +16,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 
 var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");

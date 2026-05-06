@@ -1,19 +1,29 @@
 ﻿@page
 @model RazorPages.Pages.Product.IndexModel
+@using RazorPages.Helpers.Constants
 @{
 }
 
 <h2>Danh sách sản phẩm</h2>
 
 <table class="table">
-    <thead><tr><th>Tên</th><th>Giá</th></tr></thead>
-    <tbody>
-    @foreach (var p in Model.Products)
-    {
+    <thead>
         <tr>
-            <td>@p.ProductName</td>
-            <td>@p.Price.ToString("N0")</td>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th></th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var p in Model.Products)
+        {
+            <tr>
+                <td>@p.ProductName</td>
+                <td>@p.Price.ToString("N0")</td>
+                <td>
+                    <a href="~/@RouteName.Product/Details/@p.ProductId">Chi tiết</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

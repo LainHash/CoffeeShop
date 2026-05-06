@@ -10,7 +10,10 @@ namespace RazorPages.Pages.Product
         private readonly ProductApiService _api;
         public List<ProductBaseDTO> Products { get; set; } = [];
 
-        public IndexModel(ProductApiService api) => _api = api;
+        public IndexModel(ProductApiService api)
+        {
+            _api = api;
+        }
 
         public async Task OnGetAsync()
         {

@@ -1,4 +1,5 @@
 ﻿using RazorPages.DTOs.Products;
+using RazorPages.Helpers.Constants;
 using System.Net.Http.Headers;
 
 namespace RazorPages.Services
@@ -25,9 +26,16 @@ namespace RazorPages.Services
 
         public async Task<List<ProductBaseDTO>> GetAllAsync()
         {
-            var res = await _http.GetAsync("product");
+            var res = await _http.GetAsync(RouteName.Product);
             res.EnsureSuccessStatusCode();
             return await res.Content.ReadFromJsonAsync<List<ProductBaseDTO>>() ?? [];
+        }
+
+        public async Task<ProductBaseDTO> GetByIdAsync(int id) 
+        {
+            var res = await _http.GetAsync($"{RouteName.Product}/{id}");
+            res.EnsureSuccessStatusCode();
+            return await res.Content.ReadFromJsonAsync<ProductBaseDTO>() ?? new ProductBaseDTO();
         }
 
         //public async Task CreateAsync(ProductBaseDTO dto)
