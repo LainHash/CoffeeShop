@@ -3,5 +3,6 @@
     public static class RouteName
     {
         public const string Product = "Products";
+        public const string Category = "Categories";
     }
 }

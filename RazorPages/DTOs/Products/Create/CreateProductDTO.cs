@@ -1,9 +1,7 @@
-﻿namespace WebAPI.DTOs.Products
+﻿namespace RazorPages.DTOs.Products.Create
 {
-    public class ProductBaseDTO
+    public class CreateProductDTO
     {
-        public Guid PublicId { get; set; } = new Guid();
-
         public string ProductName { get; set; } = null!;
 
         public int CategoryId { get; set; }
@@ -13,9 +11,5 @@
         public string ImageUrl { get; set; } = null!;
 
         public string? Description { get; set; }
-
-        public bool IsAvailable { get; set; } = true;
-
-        public DateTime CreatedAt { get; set; }
     }
 }

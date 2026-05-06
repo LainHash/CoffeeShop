@@ -30,7 +30,7 @@ namespace WebAPI.Controllers
         {
             var query = _context.Products;
             var products = await query.ToListAsync();
-            var dtos = _mapper.Map<List<ProductBaseDTO>>(products);
+            var dtos = _mapper.Map<List<ProductDTO>>(products);
             return Ok(dtos);
         }
 
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
                 return BadRequest("Sản phẩm không tồn tại!");
             }
 
-            var dtos = _mapper.Map<ProductBaseDTO>(product);
+            var dtos = _mapper.Map<ProductDTO>(product);
 
             return Ok(dtos);
         }
@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return Ok(_mapper.Map<ProductBaseDTO>(product));
+            return Ok(_mapper.Map<ProductDTO>(product));
 
         }
 
@@ -90,7 +90,7 @@ namespace WebAPI.Controllers
             _mapper.Map(dto, product);
             await _context.SaveChangesAsync();
 
-            return Ok(_mapper.Map<ProductBaseDTO>(product));
+            return Ok(_mapper.Map<ProductDTO>(product));
         }
     }
 }

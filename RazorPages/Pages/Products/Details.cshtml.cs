@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorPages.DTOs.Products;
-using RazorPages.Services;
+using RazorPages.Services.Products;
 
 namespace RazorPages.Pages.Product
 {
@@ -9,7 +9,7 @@ namespace RazorPages.Pages.Product
     {
         private readonly ProductApiService _api;
 
-        public ProductBaseDTO Product { get; set; } = new ProductBaseDTO();
+        public ProductDTO Product { get; set; } = new ProductDTO();
 
         public DetailsModel(ProductApiService api)
         {

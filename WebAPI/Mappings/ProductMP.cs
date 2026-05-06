@@ -10,7 +10,7 @@ namespace WebAPI.Mappings
     {
         public ProductMP()
         {
-            CreateMap<Product, ProductBaseDTO>().ReverseMap();
+            CreateMap<Product, ProductDTO>().ReverseMap();
             CreateMap<CreateProductDTO, Product>()
                 .ForMember(dest => dest.PublicId, opt => opt.Ignore())
                 .ForMember(dest => dest.IsAvailable, opt => opt.Ignore())

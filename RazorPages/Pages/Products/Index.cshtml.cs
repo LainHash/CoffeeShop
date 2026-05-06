@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorPages.DTOs.Products;
-using RazorPages.Services;
+using RazorPages.Services.Products;
 
 namespace RazorPages.Pages.Product
 {
     public class IndexModel : PageModel
     {
         private readonly ProductApiService _api;
-        public List<ProductBaseDTO> Products { get; set; } = [];
+        public List<ProductDTO> Products { get; set; } = [];
 
         public IndexModel(ProductApiService api)
         {
