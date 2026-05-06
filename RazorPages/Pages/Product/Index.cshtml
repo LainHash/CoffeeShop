@@ -1,0 +1,19 @@
+﻿@page
+@model RazorPages.Pages.Product.IndexModel
+@{
+}
+
+<h2>Danh sách sản phẩm</h2>
+
+<table class="table">
+    <thead><tr><th>Tên</th><th>Giá</th></tr></thead>
+    <tbody>
+    @foreach (var p in Model.Products)
+    {
+        <tr>
+            <td>@p.ProductName</td>
+            <td>@p.Price.ToString("N0")</td>
+        </tr>
+    }
+    </tbody>
+</table>
