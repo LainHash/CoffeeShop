@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Http.HttpResults;
 using WebAPI.DTOs.Products;
 using WebAPI.DTOs.Products.Create;
 using WebAPI.DTOs.Products.Update;
@@ -10,7 +10,8 @@ namespace WebAPI.Services.Interfaces
     {
         Task<IEnumerable<ProductDTO>> GetAllAsync();
         Task<ProductDTO?> GetByIdAsync(Guid id);
-        Task<CreateProductDTO> CreateAsync(CreateProductDTO dto);
-        Task<UpdateProductDTO> UpdateAsync(Guid id, UpdateProductDTO dto);
+        Task<ProductDTO> CreateAsync(CreateProductDTO dto);
+        Task<ProductDTO> UpdateAsync(Guid id, UpdateProductDTO dto);
+        Task DeleteAsync(Guid id);
     }
 }

@@ -51,6 +51,7 @@ namespace WebAPI.Mappings
                     opt.MapFrom(src => src.Description);
                 });
             CreateMap<Product, UpdateProductDTO>();
+            CreateMap<Product, CreateProductDTO>();
 
         }
     }

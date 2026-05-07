@@ -10,6 +10,7 @@ namespace RazorPages.Services.Interfaces
         Task<ProductDTO?> GetByIdAsync(Guid id);
         Task<bool> CreateAsync(CreateProductDTO dto);
         Task<bool> UpdateAsync(Guid id, UpdateProductDTO dto);
+        Task DeleteAsync(Guid id); 
         
     }
 }

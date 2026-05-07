@@ -58,6 +58,11 @@ namespace RazorPages.Services.Implementations
             request.Content = JsonContent.Create(dto);
 
             using var response = await _http.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
             return response.IsSuccessStatusCode;
         }
 
@@ -67,7 +72,23 @@ namespace RazorPages.Services.Implementations
             request.Content = JsonContent.Create(dto);
 
             using var response = await _http.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            using var request = CreateRequest(
+                HttpMethod.Delete,
+                $"{RouteName.Product}/{id}");
+
+            using var response = await _http.SendAsync(request);
+
+            response.EnsureSuccessStatusCode();
         }
     }
 }

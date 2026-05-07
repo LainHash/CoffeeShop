@@ -37,11 +37,11 @@ namespace WebAPI.Controllers
 
                 return Ok(product);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
-            
+
         }
 
         [HttpPost]
@@ -55,12 +55,16 @@ namespace WebAPI.Controllers
 
             var product = await _productService.CreateAsync(dto);
 
-            return Ok(product);
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = product.PublicId },
+                product
+            );
 
         }
 
-        [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] UpdateProductDTO dto, [FromServices] IValidator<UpdateProductDTO> validator, Guid id)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductDTO dto, [FromServices] IValidator<UpdateProductDTO> validator)
         {
             var error = await validator.ValidateAndReturnError(dto);
             if (error != null)
@@ -76,8 +80,24 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+        }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                await _productService.DeleteAsync(id);
+
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new
+                {
+                    message = ex.Message
+                });
+            }
         }
     }
 }

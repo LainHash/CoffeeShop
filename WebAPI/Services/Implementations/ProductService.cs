@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
@@ -27,6 +28,7 @@ namespace WebAPI.Services.Implementations
             var query = _context.Products;
 
             var products = await query
+                .Where(p => p.IsAvailable)
                 .ToListAsync();
 
             var dtos = _mapper.Map<IEnumerable<ProductDTO>>(products);
@@ -44,13 +46,17 @@ namespace WebAPI.Services.Implementations
             {
                 throw new Exception("Sản phẩm không tồn tại!");
             }
+            if (!product.IsAvailable) 
+            {
+                throw new Exception("Sản phẩm đã bị xóa!");
+            }
 
             var dto = _mapper.Map<ProductDTO>(product);
 
             return dto;
         }
 
-        public async Task<CreateProductDTO> CreateAsync(CreateProductDTO dto)
+        public async Task<ProductDTO> CreateAsync(CreateProductDTO dto)
         {
 
             var product = _mapper.Map<Product>(dto);
@@ -58,10 +64,10 @@ namespace WebAPI.Services.Implementations
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<CreateProductDTO>(product);
+            return _mapper.Map<ProductDTO>(product);
         }
 
-        public async Task<UpdateProductDTO> UpdateAsync(Guid id, UpdateProductDTO dto)
+        public async Task<ProductDTO> UpdateAsync(Guid id, UpdateProductDTO dto)
         {
             var query = _context.Products;
 
@@ -75,7 +81,24 @@ namespace WebAPI.Services.Implementations
             _mapper.Map(dto, product);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<UpdateProductDTO>(product);
+            return _mapper.Map<ProductDTO>(product);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var query = _context.Products;
+            var product = await query
+                .FirstOrDefaultAsync(p => p.PublicId == id);
+
+            if (product == null)
+            {
+                throw new KeyNotFoundException("Sản phẩm không tồn tại!");
+            }
+
+            product.IsAvailable = false;
+
+            await _context.SaveChangesAsync();
+
         }
     }
 }

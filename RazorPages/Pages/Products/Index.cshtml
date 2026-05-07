@@ -25,6 +25,14 @@
                            asp-route-id="@p.PublicId">
                         Chi tiết
                     </a>
+                    <a asp-page="/@RouteName.Product/Edit"
+                           asp-route-id="@p.PublicId">
+                        Chỉnh sửa
+                    </a>
+                    <a asp-page="/@RouteName.Product/Delete"
+                           asp-route-id="@p.PublicId">
+                        Xóa
+                    </a>
                 </td>
             </tr>
         }
