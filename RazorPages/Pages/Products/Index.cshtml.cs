@@ -1,23 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorPages.DTOs.Products;
-using RazorPages.Services.Products;
+
+using RazorPages.Services.Interfaces;
 
 namespace RazorPages.Pages.Product
 {
     public class IndexModel : PageModel
     {
-        private readonly ProductApiService _api;
+        private readonly IProductApiService _productService;
         public List<ProductDTO> Products { get; set; } = [];
 
-        public IndexModel(ProductApiService api)
+        public IndexModel(IProductApiService productService)
         {
-            _api = api;
+            _productService = productService;
         }
 
         public async Task OnGetAsync()
         {
-            Products = await _api.GetAllAsync();
+            Products = await _productService.GetAllAsync();
         }
     }
 }

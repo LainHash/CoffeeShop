@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Data;
+using WebAPI.Services.Implementations;
+using WebAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
 builder.Services.AddDbContext<CoffeeShopDbContext>(option => option.UseSqlServer(myConnectionString));
+
+builder.Services.AddScoped<IProductService, ProductService>();
+//builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
 
 builder.Services.AddAutoMapper(cfg =>
 {

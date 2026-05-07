@@ -4,9 +4,8 @@ using RazorPages.DTOs.Products.Update;
 using RazorPages.Helpers.Constants;
 using RazorPages.Services.Interfaces;
 using System.Net.Http.Headers;
-using System.Net.WebSockets;
 
-namespace RazorPages.Services.Products
+namespace RazorPages.Services.Implementations
 {
     public class ProductApiService : IProductApiService
     {

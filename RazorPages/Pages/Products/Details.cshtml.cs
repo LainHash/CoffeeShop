@@ -1,24 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazorPages.DTOs.Products;
-using RazorPages.Services.Products;
+using RazorPages.Services.Interfaces;
 
 namespace RazorPages.Pages.Product
 {
     public class DetailsModel : PageModel
     {
-        private readonly ProductApiService _api;
+        private readonly IProductApiService _productService;
 
         public ProductDTO Product { get; set; } = new ProductDTO();
 
-        public DetailsModel(ProductApiService api)
+        public DetailsModel(IProductApiService productService)
         {
-            _api = api;
+            _productService = productService;
         }
 
         public async Task<IActionResult> OnGetAsync(Guid id)
         {
-            var product = await _api.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
 
             if (product is null)
                 return NotFound(); // hoặc RedirectToPage("/NotFound")

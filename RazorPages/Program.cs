@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RazorPages.Services.Implementations;
-using RazorPages.Services.Products;
+using RazorPages.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +14,8 @@ builder.Services.AddHttpClient("API", client =>
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
-builder.Services.AddScoped<ProductApiService>();
-builder.Services.AddScoped<CategoryApiService>();
+builder.Services.AddScoped<IProductApiService, ProductApiService>();
+builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
 
 // Cookie Auth cho Razor Pages
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

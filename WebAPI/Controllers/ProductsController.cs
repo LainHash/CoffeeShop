@@ -1,14 +1,11 @@
 ﻿
-using AutoMapper;
+
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebAPI.Data;
-using WebAPI.DTOs.Products;
 using WebAPI.DTOs.Products.Create;
 using WebAPI.DTOs.Products.Update;
 using WebAPI.Helpers.Extensions;
-using WebAPI.Models;
+using WebAPI.Services.Interfaces;
 
 namespace WebAPI.Controllers
 {
@@ -16,39 +13,35 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly CoffeeShopDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IProductService _productService;
 
-        public ProductsController(CoffeeShopDbContext context, IMapper mapper)
+        public ProductsController(IProductService productService)
         {
-            _context = context;
-            _mapper = mapper;
+            _productService = productService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var query = _context.Products;
-            var products = await query.ToListAsync();
-            var dtos = _mapper.Map<List<ProductDTO>>(products);
-            return Ok(dtos);
+            var products = await _productService.GetAllAsync();
+
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var query = _context.Products;
-
-            var product = await query
-                .FirstOrDefaultAsync(p => p.PublicId == id);
-            if (product == null)
+            try
             {
-                return BadRequest("Sản phẩm không tồn tại!");
+                var product = await _productService.GetByIdAsync(id);
+
+                return Ok(product);
             }
-
-            var dtos = _mapper.Map<ProductDTO>(product);
-
-            return Ok(dtos);
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpPost]
@@ -60,12 +53,9 @@ namespace WebAPI.Controllers
                 return error;
             }
 
-            var product = _mapper.Map<Product>(dto);
+            var product = await _productService.CreateAsync(dto);
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-
-            return Ok(_mapper.Map<ProductDTO>(product));
+            return Ok(product);
 
         }
 
@@ -77,20 +67,17 @@ namespace WebAPI.Controllers
             {
                 return error;
             }
-
-            var query = _context.Products;
-
-            var product = await query
-                .FirstOrDefaultAsync(p => p.PublicId == id);
-            if (product == null)
+            try
             {
-                return BadRequest("Sản phẩm không tồn tại!");
+                var product = await _productService.UpdateAsync(id, dto);
+                return Ok(product);
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
-            _mapper.Map(dto, product);
-            await _context.SaveChangesAsync();
-
-            return Ok(_mapper.Map<ProductDTO>(product));
         }
     }
 }

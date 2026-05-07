@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RazorPages.DTOs.Products.Create;
 using RazorPages.Services.Interfaces;
-using RazorPages.Services.Products;
 
 namespace RazorPages.Pages.Products
 {
