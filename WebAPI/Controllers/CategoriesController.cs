@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
+using WebAPI.Services.Interfaces.Products;
 
 namespace WebAPI.Controllers
 {
@@ -10,28 +11,28 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly CoffeeShopDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly ICategoryService _categoryService;
 
-        public CategoriesController(CoffeeShopDbContext context, IMapper mapper)
+        public CategoriesController(ICategoryService categoryService)
         {
-            _context = context;
-            _mapper = mapper;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var query = _context.Categories;
-            var categories = await query.ToListAsync();
+            var categories = await _categoryService.GetAllAsync();
             return Ok(categories);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var query = _context.Categories;
-            var category = await query.FirstOrDefaultAsync(ctg => ctg.CategoryId == id);
+            var category = await _categoryService.GetByIdAsync(id);
+            if (category == null)
+            {
+                return NotFound("Loại sản phẩm không tồn tại!");
+            }
             return Ok(category);
         }
     }

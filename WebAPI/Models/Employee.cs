@@ -13,13 +13,15 @@ public partial class Employee
 
     public string Username { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    public string PasswordHash { get; set; } = null!;
 
     public string? Phone { get; set; }
 
-    public string RoleName { get; set; } = null!;
+    public string Position { get; set; } = null!;
 
     public bool IsActive { get; set; }
+
+    public Guid PublicId { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

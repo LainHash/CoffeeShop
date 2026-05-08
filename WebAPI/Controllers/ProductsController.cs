@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs.Products.Create;
 using WebAPI.DTOs.Products.Update;
 using WebAPI.Helpers.Extensions;
-using WebAPI.Services.Interfaces;
+using WebAPI.Services.Interfaces.Products;
 
 namespace WebAPI.Controllers
 {

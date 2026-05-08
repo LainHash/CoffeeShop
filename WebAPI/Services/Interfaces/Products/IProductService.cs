@@ -4,7 +4,7 @@ using WebAPI.DTOs.Products;
 using WebAPI.DTOs.Products.Create;
 using WebAPI.DTOs.Products.Update;
 
-namespace WebAPI.Services.Interfaces
+namespace WebAPI.Services.Interfaces.Products
 {
     public interface IProductService
     {

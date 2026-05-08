@@ -38,7 +38,7 @@ public partial class CoffeeShopDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=localhost; Initial Catalog=CoffeeShopDB; Persist Security Info=True; User ID=sa; Password=123456; Trust Server Certificate=True;");
+        => optionsBuilder.UseSqlServer("Data Source=localhost; Initial Catalog=CoffeeShopDb; Persist Security Info=True; User ID=sa; Password=123456; Trust Server Certificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,18 +62,21 @@ public partial class CoffeeShopDbContext : DbContext
         {
             entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D864EF4D22");
 
+            entity.HasIndex(e => e.Phone, "IX_Customers").IsUnique();
+
             entity.HasIndex(e => e.Username, "UQ__Customer__536C85E40C349FFD").IsUnique();
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.FullName).HasMaxLength(100);
-            entity.Property(e => e.Password)
+            entity.Property(e => e.PasswordHash)
                 .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.Phone)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.PublicId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -85,6 +88,8 @@ public partial class CoffeeShopDbContext : DbContext
 
             entity.HasIndex(e => e.Email, "IX_Employees").IsUnique();
 
+            entity.HasIndex(e => e.Phone, "IX_Employees_1").IsUnique();
+
             entity.HasIndex(e => e.Username, "UQ__Employee__536C85E4481AFB86").IsUnique();
 
             entity.Property(e => e.Email)
@@ -92,13 +97,14 @@ public partial class CoffeeShopDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.Password)
+            entity.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Phone)
                 .HasMaxLength(20)
                 .IsUnicode(false);
-            entity.Property(e => e.RoleName).HasMaxLength(50);
+            entity.Property(e => e.Position).HasMaxLength(50);
+            entity.Property(e => e.PublicId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .IsUnicode(false);

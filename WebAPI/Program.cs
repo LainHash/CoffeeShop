@@ -1,11 +1,14 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Data;
-using WebAPI.Services.Implementations;
-using WebAPI.Services.Interfaces;
+using WebAPI.Services.Implementations.Auths;
+using WebAPI.Services.Implementations.Products;
+using WebAPI.Services.Interfaces.Auths;
+using WebAPI.Services.Interfaces.Products;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,14 +19,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".NetCore.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
 builder.Services.AddDbContext<CoffeeShopDbContext>(option => option.UseSqlServer(myConnectionString));
 
 builder.Services.AddScoped<IProductService, ProductService>();
-//builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddAutoMapper(cfg =>
 {
@@ -36,7 +49,6 @@ builder.Services.AddCors(opt =>
               .AllowAnyMethod()
               .AllowAnyHeader()));
 
-// JWT Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt => {
         opt.TokenValidationParameters = new TokenValidationParameters
@@ -50,7 +62,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
+        opt.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["jwt"];
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.Redirect("/Customers/Login");
+                return Task.CompletedTask;
+            }
+        };
     });
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -64,6 +91,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -9,9 +9,9 @@ using WebAPI.DTOs.Products.Create;
 using WebAPI.DTOs.Products.Update;
 using WebAPI.Helpers.Extensions;
 using WebAPI.Models;
-using WebAPI.Services.Interfaces;
+using WebAPI.Services.Interfaces.Products;
 
-namespace WebAPI.Services.Implementations
+namespace WebAPI.Services.Implementations.Products
 {
     public class ProductService : IProductService
     {
