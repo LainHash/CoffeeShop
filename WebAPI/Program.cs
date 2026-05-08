@@ -19,6 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Session
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".NetCore.Session";
@@ -27,28 +28,34 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddDistributedMemoryCache();
+
+//Validator
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-builder.Services.AddScoped<IEmailService, EmailService>();
-
-
+//Connection String
 var myConnectionString = builder.Configuration.GetConnectionString("MyConnectString");
 builder.Services.AddDbContext<CoffeeShopDbContext>(option => option.UseSqlServer(myConnectionString));
 
+//Service Scope
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+//Auto Mapper
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddMaps(typeof(Program).Assembly);
 });
 
+//Cors
 builder.Services.AddCors(opt =>
     opt.AddPolicy("AllowWeb", policy =>
         policy.WithOrigins("https://localhost:7279")
               .AllowAnyMethod()
               .AllowAnyHeader()));
 
+//Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt => {
         opt.TokenValidationParameters = new TokenValidationParameters
