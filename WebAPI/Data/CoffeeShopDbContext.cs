@@ -66,17 +66,22 @@ public partial class CoffeeShopDbContext : DbContext
 
             entity.HasIndex(e => e.Username, "UQ__Customer__536C85E40C349FFD").IsUnique();
 
+            entity.Property(e => e.ConfirmationToken).HasMaxLength(500);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsFixedLength();
             entity.Property(e => e.FullName).HasMaxLength(100);
             entity.Property(e => e.PasswordHash)
-                .HasMaxLength(30)
+                .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Phone)
                 .HasMaxLength(20)
                 .IsUnicode(false);
             entity.Property(e => e.PublicId).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.TokenExpiry).HasColumnType("datetime");
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .IsUnicode(false);

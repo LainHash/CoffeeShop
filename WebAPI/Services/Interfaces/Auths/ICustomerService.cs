@@ -1,9 +1,11 @@
 ﻿using WebAPI.DTOs.Accounts.Customers;
+using WebAPI.DTOs.Auths.Customers;
 
 namespace WebAPI.Services.Interfaces.Auths
 {
     public interface ICustomerService
     {
         Task<string> LoginAsync(LoginDTO dto);
+        Task<string> RegisterAsync(RegisterDTO dto);
     }
 }

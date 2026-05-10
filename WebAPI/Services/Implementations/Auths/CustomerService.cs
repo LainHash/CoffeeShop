@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using WebAPI.Data;
 using WebAPI.DTOs.Accounts.Customers;
+using WebAPI.DTOs.Auths.Customers;
 using WebAPI.Models;
 using WebAPI.Services.Interfaces.Auths;
 
@@ -30,16 +31,46 @@ namespace WebAPI.Services.Implementations.Auths
         {
             var query = _context.Customers;
             var customer = await query
-                .FirstOrDefaultAsync(c => c.Username == dto.Username);
+                .FirstOrDefaultAsync(c => c.Email == dto.Email);
 
-            if (customer == null ||
-                !BCrypt.Net.BCrypt.Verify(dto.Password, customer.PasswordHash))
+            if (customer == null || !BCrypt.Net.BCrypt.Verify(dto.Password, customer.PasswordHash))
             {
                 throw new UnauthorizedAccessException("Sai mật khẩu hoặc tên đăng nhập!");
+            }
+            if (customer.IsActive)
+            {
+                throw new UnauthorizedAccessException("Email chưa được xác nhận!");
             }
 
             return GenerateJwtToken(customer);
         }
+
+        public async Task<string> RegisterAsync(RegisterDTO dto)
+        {
+            var query = _context.Customers;
+            var isExistedEmail = await query
+                .AnyAsync(c => c.Email == dto.Email);
+            if(isExistedEmail)
+            {
+                throw new UnauthorizedAccessException("Email này đã được sử dụng!");
+            }
+            var customer = new Customer()
+            {
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                IsActive = false,
+                Phone = dto.Phone,
+                FullName = dto.FullName
+            };
+
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            return "Đăng ký thành công!";
+
+        }
+
+        
 
         private string GenerateJwtToken(Customer customer)
         {
@@ -49,6 +80,7 @@ namespace WebAPI.Services.Implementations.Auths
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, customer.CustomerId.ToString()),
+                new Claim(ClaimTypes.Email, customer.Email),
                 new Claim(ClaimTypes.Name, customer.Username)
             };
 

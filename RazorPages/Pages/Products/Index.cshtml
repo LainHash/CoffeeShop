@@ -3,38 +3,51 @@
 @using RazorPages.Helpers.Constants
 @{
 }
-
-<h2>Danh sách sản phẩm</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Tên</th>
-            <th>Giá</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model.Products)
-        {
-            <tr>
-                <td>@p.ProductName</td>
-                <td>@p.Price.ToString("N0")</td>
-                <td>
-                    <a asp-page="/@RouteName.Product/Details"
-                           asp-route-id="@p.PublicId">
-                        Chi tiết
-                    </a>
-                    <a asp-page="/@RouteName.Product/Edit"
-                           asp-route-id="@p.PublicId">
-                        Chỉnh sửa
-                    </a>
-                    <a asp-page="/@RouteName.Product/Delete"
-                           asp-route-id="@p.PublicId">
-                        Xóa
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Menu Start -->
+<div class="container-fluid pt-5">
+    <div class="container">
+        <div class="section-title">
+            <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Menu & Pricing</h4>
+            <h1 class="display-4">Competitive Pricing</h1>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                @for (var index = 0; index < Model.Products.Count(); index += 2)
+                {
+                    <div class="row align-items-center mb-5">
+                        <div class="col-4 col-sm-3">
+                            <img class="rounded-circle mb-3 mb-sm-0"
+                                 style="object-fit:cover; width: 120px; height: 120px;"
+                                 src="@Model.Products[index].ImageUrl" alt="">
+                            <h5 class="menu-price">@Model.Products[index].Price.ToString("N0")đ</h5>
+                        </div>
+                        <div class="col-8 col-sm-9">
+                            <h4>@Model.Products[index].ProductName</h4>
+                            <p class="m-0">@Model.Products[index].Description</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6">
+                @for (var index = 1; index < Model.Products.Count(); index += 2)
+                {
+                    <div class="row align-items-center mb-5">
+                        <div class="col-4 col-sm-3">
+                            <img class="rounded-circle mb-3 mb-sm-0"
+                                 style="object-fit:cover; width: 120px; height: 120px;"
+                                 src="@Model.Products[index].ImageUrl" alt="">
+                            <h5 class="menu-price">
+                                @Model.Products[index].Price.ToString("N0")đ
+                            </h5>
+                        </div>
+                        <div class="col-8 col-sm-9">
+                            <h4>@Model.Products[index].ProductName</h4>
+                            <p class="m-0">@Model.Products[index].Description</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Menu End -->

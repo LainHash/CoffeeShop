@@ -19,6 +19,14 @@ public partial class Customer
 
     public Guid PublicId { get; set; }
 
+    public string Email { get; set; } = null!;
+
+    public bool IsActive { get; set; }
+
+    public string? ConfirmationToken { get; set; }
+
+    public DateTime? TokenExpiry { get; set; }
+
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
