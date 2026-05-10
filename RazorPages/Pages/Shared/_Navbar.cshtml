@@ -1,4 +1,4 @@
-﻿@using Helpers.Constants
+@using Helpers.Constants
 
 <!-- Navbar Start -->
 <div class="container-fluid p-0 nav-bar">
@@ -29,7 +29,32 @@
                     </div>
                 </div>
                 <a href="contact.html" class="nav-item nav-link">Contact</a>
-                <a href="https://htmlcodex.com/downloading/?item=1528" class="btn btn-primary font-weight-bold ml-3">Buy Pro Version</a>
+                @if (string.IsNullOrEmpty(Context.Session.GetString("JwtToken")))
+                {
+                    <a asp-page="/Account/Register" class="btn btn-outline-light font-weight-bold ml-3">
+                        <i class="fa fa-user-plus mr-1"></i>Đăng ký
+                    </a>
+                    <a asp-page="/Account/Login" class="btn btn-primary font-weight-bold ml-2">
+                        <i class="fa fa-sign-in mr-1"></i>Đăng nhập
+                    </a>
+                }
+                else
+                {
+                    <div class="nav-item dropdown ml-3">
+                        <a href="#" class="btn btn-primary font-weight-bold dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-user-circle mr-1"></i>@Context.Session.GetString("Username")
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" asp-page="/Account/Profile">
+                                <i class="fa fa-id-card mr-2"></i>Trang cá nhân
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" asp-page="/Account/Logout">
+                                <i class="fa fa-sign-out mr-2"></i>Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </nav>

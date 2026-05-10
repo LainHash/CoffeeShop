@@ -22,7 +22,7 @@ namespace RazorPages.Pages.Account
 
         public IActionResult OnGet(string? message)
         {
-            // Hiển thị thông báo sau khi đăng ký thành công
+            
             if (!string.IsNullOrEmpty(message))
                 SuccessMessage = message;
 
@@ -42,7 +42,7 @@ namespace RazorPages.Pages.Account
                 return Page();
             }
 
-            // Redirect về trang yêu cầu hoặc trang chủ
+            
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return LocalRedirect(returnUrl);
 

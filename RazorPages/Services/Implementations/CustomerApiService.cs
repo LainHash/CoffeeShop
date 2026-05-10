@@ -2,8 +2,9 @@ using RazorPages.DTOs.Customers;
 using RazorPages.Helpers.Constants;
 using RazorPages.Services.Interfaces;
 using System.Net;
-using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace RazorPages.Services.Implementations
 {
@@ -40,7 +41,6 @@ namespace RazorPages.Services.Implementations
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Lưu cookie jwt nhận được từ API vào session của Razor Pages
                     if (response.Headers.TryGetValues("Set-Cookie", out var cookies))
                     {
                         foreach (var cookie in cookies)
@@ -49,6 +49,24 @@ namespace RazorPages.Services.Implementations
                             {
                                 var jwtValue = cookie.Split(';')[0]["jwt=".Length..];
                                 _ctx.HttpContext?.Session.SetString("JwtToken", jwtValue);
+
+                                try
+                                {
+                                    var parts = jwtValue.Split('.');
+                                    if (parts.Length == 3)
+                                    {
+                                        var payload = parts[1];
+                                        payload = payload.Replace('-', '+').Replace('_', '/');
+                                        payload += (payload.Length % 4) switch { 2 => "==", 3 => "=", _ => "" };
+                                        var json64 = Encoding.UTF8.GetString(Convert.FromBase64String(payload));
+                                        var node = JsonNode.Parse(json64);
+                                        var username = node?["unique_name"]?.GetValue<string>()
+                                                    ?? node?["name"]?.GetValue<string>();
+                                        if (!string.IsNullOrEmpty(username))
+                                            _ctx.HttpContext?.Session.SetString("Username", username);
+                                    }
+                                }
+                                catch {  }
                             }
                         }
                     }
@@ -56,15 +74,13 @@ namespace RazorPages.Services.Implementations
                     var result = JsonSerializer.Deserialize<ApiMessageResponse>(json, _jsonOpts);
                     return (true, result?.Message ?? "Đăng nhập thành công");
                 }
-
-                // 401 Unauthorized
+                
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var err = JsonSerializer.Deserialize<ApiMessageResponse>(json, _jsonOpts);
                     return (false, err?.Message ?? "Sai tên đăng nhập hoặc mật khẩu");
                 }
 
-                // 400 Bad Request — validation errors
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     var err = JsonSerializer.Deserialize<ApiErrorResponse>(json, _jsonOpts);
@@ -99,14 +115,12 @@ namespace RazorPages.Services.Implementations
                     return (true, result?.Message ?? "Đăng ký thành công! Vui lòng kiểm tra email.");
                 }
 
-                // 409 Conflict — email/username đã tồn tại
                 if (response.StatusCode == HttpStatusCode.Conflict)
                 {
                     var err = JsonSerializer.Deserialize<ApiMessageResponse>(json, _jsonOpts);
                     return (false, err?.Message ?? "Thông tin đã được sử dụng");
                 }
 
-                // 400 Bad Request — validation errors
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     var err = JsonSerializer.Deserialize<ApiErrorResponse>(json, _jsonOpts);

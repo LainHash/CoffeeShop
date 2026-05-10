@@ -4,10 +4,10 @@ using RazorPages.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddRazorPages();
 
-// Đăng ký HttpClient gọi sang API
+
 builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7181/api/");
@@ -18,7 +18,7 @@ builder.Services.AddScoped<IProductApiService, ProductApiService>();
 builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
 builder.Services.AddScoped<ICustomerApiService, CustomerApiService>();
 
-// Cookie Auth cho Razor Pages
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opt => {
         opt.LoginPath = "/Account/Login";

@@ -102,5 +102,19 @@ namespace WebAPI.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpPost("logout")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public IActionResult Logout()
+        {
+            
+            Response.Cookies.Append("jwt", string.Empty, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            });
+
+            return Ok(new { message = "Đăng xuất thành công" });
+        }
     }
 }

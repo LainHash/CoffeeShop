@@ -37,7 +37,7 @@ namespace RazorPages.Pages.Account
                 return Page();
             }
 
-            // Sau khi đăng ký thành công, chuyển về Login với thông báo
+            
             return RedirectToPage("/Account/Login",
                 new { message = "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản." });
         }

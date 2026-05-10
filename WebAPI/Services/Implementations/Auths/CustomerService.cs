@@ -71,15 +71,15 @@ namespace WebAPI.Services.Implementations.Auths
                 FullName = dto.FullName,
                 Phone = dto.Phone,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                IsActive = false,                        // Chờ xác nhận email
+                IsActive = false,                        
                 ConfirmationToken = token,
-                TokenExpiry = DateTime.UtcNow.AddHours(24) // Token hết hạn sau 24h
+                TokenExpiry = DateTime.UtcNow.AddHours(24)
             };
 
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            // Gửi email xác nhận
+            
             var baseUrl = _config["AppSettings:BaseUrl"] ?? "https://localhost:7001";
             var confirmUrl = $"{baseUrl}/api/Customers/confirm-email?token={token}";
             var emailBody = BuildConfirmationEmail(dto.FullName, confirmUrl);
@@ -110,7 +110,7 @@ namespace WebAPI.Services.Implementations.Auths
             }
 
             customer.IsActive = true;
-            customer.ConfirmationToken = null;  // Xóa token sau khi dùng
+            customer.ConfirmationToken = null; 
             customer.TokenExpiry = null;
 
             await _context.SaveChangesAsync();
