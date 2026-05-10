@@ -39,6 +39,7 @@ builder.Services.AddDbContext<CoffeeShopDbContext>(option => option.UseSqlServer
 
 //Service Scope
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 

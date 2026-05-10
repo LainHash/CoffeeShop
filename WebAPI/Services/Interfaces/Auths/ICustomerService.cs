@@ -1,4 +1,4 @@
-﻿using WebAPI.DTOs.Accounts.Customers;
+using WebAPI.DTOs.Accounts.Customers;
 using WebAPI.DTOs.Auths.Customers;
 
 namespace WebAPI.Services.Interfaces.Auths
@@ -7,5 +7,6 @@ namespace WebAPI.Services.Interfaces.Auths
     {
         Task<string> LoginAsync(LoginDTO dto);
         Task<string> RegisterAsync(RegisterDTO dto);
+        Task<string> ConfirmEmailAsync(string token);
     }
 }
