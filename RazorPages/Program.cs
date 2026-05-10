@@ -16,6 +16,7 @@ builder.Services.AddHttpClient("API", client =>
 
 builder.Services.AddScoped<IProductApiService, ProductApiService>();
 builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<ICustomerApiService, CustomerApiService>();
 
 // Cookie Auth cho Razor Pages
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
